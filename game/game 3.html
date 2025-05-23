@@ -29,43 +29,34 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-
     body {
       background-color: #f5f7ff;
       color: var(--dark);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      padding: 2rem 1rem;
     }
 
     .container {
       width: 100%;
       max-width: 800px;
-      height: calc(100vh - 2rem);
-      max-height: 800px;
       background: var(--white);
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
+      padding: 2.5rem;
+      margin: 0 auto;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
+      margin-bottom: 2rem;
     }
 
     .header h1 {
       color: var(--primary);
-      font-size: 1.8rem;
+      font-size: 2.2rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
       background: var(--bg-gradient);
@@ -75,25 +66,24 @@
 
     .header p {
       color: var(--gray);
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 400;
     }
 
     .game-menu {
       background: rgba(67, 97, 238, 0.05);
       border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
       text-align: center;
-      flex-shrink: 0;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.8rem;
-      margin-bottom: 1rem;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-control {
@@ -108,9 +98,9 @@
     }
 
     input[type="number"] {
-      padding: 0.6rem 0.8rem;
-      font-size: 0.9rem;
-      width: 80px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      width: 100px;
       border: 2px solid #e9ecef;
       border-radius: 8px;
       transition: all 0.3s;
@@ -124,8 +114,8 @@
     }
 
     .btn {
-      padding: 0.7rem 1.5rem;
-      font-size: 0.9rem;
+      padding: 0.75rem 1.75rem;
+      font-size: 1rem;
       font-weight: 600;
       border: none;
       border-radius: 8px;
@@ -153,19 +143,27 @@
       transform: translateY(0);
     }
 
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: rgba(67, 97, 238, 0.1);
+    }
+
     .game-info {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
+      margin-bottom: 1.5rem;
     }
 
     .timer, .score {
       background: var(--white);
-      padding: 0.6rem 1.2rem;
+      padding: 0.75rem 1.5rem;
       border-radius: 50px;
       font-weight: 600;
-      font-size: 0.9rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
@@ -180,44 +178,37 @@
     }
 
     .game-board {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      margin: 2rem 0;
     }
 
     #grid {
       display: grid;
-      grid-template-columns: 30px repeat(11, 1fr);
-      grid-template-rows: 30px repeat(11, 1fr);
+      grid-template-columns: 40px repeat(11, 1fr);
+      grid-template-rows: 40px repeat(11, 1fr);
       margin: 0 auto;
       background: var(--white);
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       border: 1px solid #e9ecef;
-      width: 100%;
-      max-width: 420px;
-      max-height: 420px;
     }
 
     .cell {
       width: 100%;
-      height: 100%;
-      min-height: 30px;
+      height: 40px;
       border: 1px solid #e9ecef;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 500;
     }
 
     .point {
       background-color: var(--danger);
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       box-shadow: 0 2px 8px rgba(239, 35, 60, 0.4);
       position: relative;
     }
@@ -251,14 +242,13 @@
     .choices-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
-      margin: 1rem 0;
-      flex-shrink: 0;
+      gap: 1rem;
+      margin: 1.5rem 0;
     }
 
     .choice-btn {
-      padding: 0.8rem;
-      font-size: 0.9rem;
+      padding: 1rem;
+      font-size: 1rem;
       font-weight: 500;
       border: 2px solid #e9ecef;
       border-radius: 8px;
@@ -280,14 +270,12 @@
     }
 
     .result {
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 8px;
-      margin: 0.5rem 0;
+      margin: 1.5rem 0;
       font-weight: 500;
       text-align: center;
       animation: fadeIn 0.5s ease;
-      flex-shrink: 0;
-      font-size: 0.9rem;
     }
 
     @keyframes fadeIn {
@@ -309,32 +297,27 @@
 
     .game-over {
       text-align: center;
-      padding: 1rem;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding: 2rem;
     }
 
     .game-over h2 {
       color: var(--primary);
       margin-bottom: 1rem;
-      font-size: 1.5rem;
+      font-size: 1.75rem;
     }
 
     .stats {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
-      margin: 1rem 0;
+      gap: 2rem;
+      margin: 1.5rem 0;
     }
 
     .stat {
       background: var(--white);
-      padding: 0.8rem 1.2rem;
+      padding: 1rem 1.5rem;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      min-width: 100px;
     }
 
     .stat.correct {
@@ -346,13 +329,13 @@
     }
 
     .stat-value {
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.25rem;
     }
 
     .stat-label {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       color: var(--gray);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -364,40 +347,25 @@
 
     @media (max-width: 768px) {
       .container {
-        padding: 1rem;
-        height: calc(100vh - 1rem);
+        padding: 1.5rem;
       }
       
       .header h1 {
-        font-size: 1.5rem;
-      }
-      
-      .header p {
-        font-size: 0.8rem;
+        font-size: 1.8rem;
       }
       
       .choices-container {
         grid-template-columns: 1fr;
       }
       
-      #grid {
-        grid-template-columns: 25px repeat(11, 1fr);
-        grid-template-rows: 25px repeat(11, 1fr);
-      }
-      
       .cell {
-        font-size: 0.6rem;
+        height: 30px;
+        font-size: 0.7rem;
       }
       
-      .game-info {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: center;
-      }
-      
-      .timer, .score {
-        width: 100%;
-        text-align: center;
+      #grid {
+        grid-template-columns: 30px repeat(11, 1fr);
+        grid-template-rows: 30px repeat(11, 1fr);
       }
     }
   </style>
@@ -412,12 +380,12 @@
     <div class="game-menu" id="menu">
       <div class="form-group">
         <div class="form-control">
-          <label for="duration"><i class="fas fa-clock"></i> Durasi:</label>
+          <label for="duration"><i class="fas fa-clock"></i> Durasi Permainan:</label>
           <input type="number" id="duration" min="10" value="60">
           <span>detik</span>
         </div>
         <button class="btn btn-primary" onclick="startGame()">
-          <i class="fas fa-play"></i> Mulai
+          <i class="fas fa-play"></i> Mulai Bermain
         </button>
       </div>
     </div>
