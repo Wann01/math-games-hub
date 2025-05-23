@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>🎯 Game Matematika</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #a18cd1, #fbc2eb);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      color: #fff;
+      text-shadow: 2px 2px 5px #000;
+      margin-top: 30px;
+    }
+
+    #mainMenu {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    #mainMenu h2 {
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    select, input, button {
+      padding: 12px 16px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    button {
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
+    }
+
+    button:hover {
+      background: #388e3c;
+      transform: scale(1.05);
+    }
+
+    #info {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 18px;
+      margin-top: 10px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #gameBoard {
+      display: grid;
+      grid-template-columns: repeat(10, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 25px;
+    }
+
+    .card {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.1);
+    }
+
+    .card.selected {
+      background: #fff59d;
+    }
+
+    .card.matched {
+      background: #81c784;
+      color: white;
+      pointer-events: none;
+      transform: scale(1.1);
+    }
+
+    #gameOverContainer {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    #gameOverBox {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    #gameOverBox h2 {
+      color: #d32f2f;
+      margin-bottom: 20px;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Game Matematika Interaktif</h1>
+
+  <div id="mainMenu">
+    <h2>🔢 Pilih Pengaturan Permainan</h2>
+    <select id="operation">
+      <option value="add">Penjumlahan</option>
+      <option value="sub">Pengurangan</option>
+      <option value="mul">Perkalian</option>
+      <option value="div">Pembagian</option>
+    </select>
+    <input type="number" id="targetResult" placeholder="Hasil Target" value="10">
+    <input type="number" id="customTime" placeholder="Waktu (detik)" value="60">
+    <br>
+    <button onclick="startGame()">🎮 Mulai Game</button>
+  </div>
+
+  <div id="info" style="display: none;">
+    <div>🧠 Skor: <span id="score">0</span></div>
+    <div>⏱️ Waktu: <span id="timer">60</span></div>
+  </div>
+
+  <div id="gameBoard"></div>
+  <div id="status"></div>
+
+  <div id="gameOverContainer">
+    <div id="gameOverBox">
+      <h2 id="gameOverText">⏰ Game Over! Skor akhir: 0</h2>
+      <button onclick="backToMenu()">🔁 Main Lagi</button>
+    </div>
+  </div>
+
+  <script>
+    const board = document.getElementById("gameBoard");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const statusDisplay = document.getElementById("status");
+    const infoPanel = document.getElementById("info");
+    const gameOverContainer = document.getElementById("gameOverContainer");
+    const gameOverText = document.getElementById("gameOverText");
+
+    let selected = [], score = 0, timeLeft = 60, timer, gameEnded = false;
+    let operation = "add", target = 10;
+
+    function startGame() {
+      board.innerHTML = "";
+      selected = [];
+      score = 0;
+      scoreDisplay.textContent = score;
+      statusDisplay.textContent = "";
+      gameEnded = false;
+      gameOverContainer.style.display = "none";
+
+      operation = document.getElementById("operation").value;
+      target = parseFloat(document.getElementById("targetResult").value);
+      timeLeft = parseInt(document.getElementById("customTime").value) || 60;
+      timerDisplay.textContent = timeLeft;
+      infoPanel.style.display = "flex";
+
+      generateCards();
+      startTimer();
+    }
+
+    function backToMenu() {
+      gameOverContainer.style.display = "none";
+      document.getElementById("mainMenu").style.display = "block";
+      board.innerHTML = "";
+      infoPanel.style.display = "none";
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          gameEnded = true;
+          gameOverText.textContent = `⏰ Game Over! Skor akhir: ${score}`;
+          gameOverContainer.style.display = "flex";
+        }
+      }, 1000);
+    }
+
+    function generateCards() {
+      let pairs = [];
+      for (let i = 0; i < 50; i++) {
+        let a, b;
+        switch (operation) {
+          case "add":
+            a = Math.floor(Math.random() * target);
+            b = target - a;
+            break;
+          case "sub":
+            b = Math.floor(Math.random() * 50) + 1;
+            a = b + target;
+            break;
+          case "mul":
+            b = Math.floor(Math.random() * 10) + 1;
+            a = target / b;
+            if (!Number.isInteger(a)) { i--; continue; }
+            break;
+          case "div":
+            b = Math.floor(Math.random() * 9) + 1;
+            a = target * b;
+            break;
+        }
+        pairs.push(Math.floor(a), Math.floor(b));
+      }
+
+      const shuffled = pairs.sort(() => Math.random() - 0.5);
+
+      shuffled.forEach((num, idx) => {
+        const card = createCard(num, idx);
+        board.appendChild(card);
+      });
+    }
+
+    function createCard(value, index) {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.textContent = value;
+      card.dataset.value = value;
+      card.dataset.index = index;
+
+      card.addEventListener("click", () => {
+        if (gameEnded || card.classList.contains("matched") || card.classList.contains("selected")) return;
+        card.classList.add("selected");
+        selected.push(card);
+
+        if (selected.length === 2) {
+          const val1 = parseFloat(selected[0].dataset.value);
+          const val2 = parseFloat(selected[1].dataset.value);
+          let valid = false;
+
+          switch (operation) {
+            case "add": valid = val1 + val2 === target; break;
+            case "sub": valid = Math.abs(val1 - val2) === target; break;
+            case "mul": valid = val1 * val2 === target; break;
+            case "div": valid = val1 / val2 === target || val2 / val1 === target; break;
+          }
+
+          if (valid) {
+            selected.forEach(c => c.classList.add("matched"));
+            score += 10;
+            scoreDisplay.textContent = score;
+            statusDisplay.textContent = "✅ Benar!";
+          } else {
+            statusDisplay.textContent = "❌ Salah!";
+            setTimeout(() => selected.forEach(c => c.classList.remove("selected")), 800);
+          }
+
+          selected = [];
+        }
+      });
+
+      return card;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrigonoMaster - Game Trigonometri Interaktif</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: var(--gray);
+      font-size: 1rem;
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+      gap: 20px;
+    }
+
+    .settings-panel {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .settings-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: 500;
+      color: var(--gray);
+      white-space: nowrap;
+    }
+
+    select, input {
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--success));
+    }
+
+    svg {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 100%;
+      height: auto;
+      user-select: none;
+    }
+
+    .side-label {
+      font-weight: 600;
+      fill: var(--dark);
+      font-size: 14px;
+      pointer-events: none;
+      text-shadow: 0 0 3px var(--white);
+    }
+
+    .angle-label {
+      font-weight: 700;
+      font-size: 18px;
+      fill: var(--danger);
+      font-style: italic;
+    }
+
+    .question {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--dark);
+      font-weight: 500;
+      padding: 0 10px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 500px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    button.option-btn {
+      background-color: var(--light);
+      color: var(--dark);
+      box-shadow: var(--shadow);
+    }
+
+    button.option-btn:hover {
+      background-color: #e9ecef;
+      transform: translateY(-2px);
+    }
+
+    button.option-btn:active {
+      transform: translateY(0);
+    }
+
+    button.option-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none !important;
+    }
+
+    button.option-btn.correct {
+      background-color: #4bb543;
+      color: white;
+    }
+
+    button.option-btn.incorrect {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      min-height: 24px;
+      margin-bottom: 15px;
+      user-select: none;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .result.correct {
+      background-color: rgba(76, 201, 240, 0.2);
+      color: #4bb543;
+    }
+
+    .result.wrong {
+      background-color: rgba(247, 37, 133, 0.2);
+      color: var(--danger);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .score, .timer, .progress {
+      background: var(--light);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .score {
+      color: var(--primary);
+    }
+
+    .timer {
+      color: var(--warning);
+    }
+
+    .progress {
+      color: var(--gray);
+    }
+
+    .progress-bar {
+      height: 5px;
+      width: 100%;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--primary), var(--success));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .btn-success {
+      background-color: #4bb543;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #3fa038;
+    }
+
+    .end-game {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .end-game h2 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .final-score {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 20px 0;
+      color: var(--primary);
+    }
+
+    .performance {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-flex;
+      margin-left: 5px;
+    }
+
+    .tooltip-icon {
+      width: 18px;
+      height: 18px;
+      background-color: var(--gray);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: help;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      font-weight: normal;
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .difficulty-badge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 8px;
+    }
+
+    .easy {
+      background-color: rgba(76, 201, 240, 0.2);
+      color: #4cc9f0;
+    }
+
+    .medium {
+      background-color: rgba(248, 150, 30, 0.2);
+      color: var(--warning);
+    }
+
+    .hard {
+      background-color: rgba(247, 37, 133, 0.2);
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TrigonoMaster</h1>
+    <p class="subtitle">Latih kemampuan trigonometri segitiga siku-siku secara interaktif</p>
+  </header>
+
+  <div class="game-container">
+    <div class="settings-panel" id="settings-panel">
+      <div class="settings-group">
+        <label for="game-time">Waktu Permainan (menit):</label>
+        <select id="game-time">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      
+      <div class="settings-group">
+        <label for="difficulty">Tingkat Kesulitan:</label>
+        <select id="difficulty">
+          <option value="easy">Mudah</option>
+          <option value="medium" selected>Menengah</option>
+          <option value="hard">Sulit</option>
+        </select>
+        <div class="tooltip">
+          <div class="tooltip-icon">?</div>
+          <span class="tooltip-text">Mudah: angka sederhana (3-9), Menengah: angka sedang (5-15), Sulit: angka besar (10-20) dan pecahan</span>
+        </div>
+      </div>
+      
+      <button id="start-btn" class="btn btn-primary">Mulai Game</button>
+    </div>
+
+    <div class="container hidden" id="game-screen">
+      <div class="game-info">
+        <div class="score" id="score">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span id="score-text">0/0</span>
+        </div>
+        <div class="timer" id="timer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span id="time-text">00:00</span>
+        </div>
+        <div class="progress">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span id="progress-text">0 soal</span>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <svg id="triangle-svg" viewBox="0 0 350 250" aria-label="Segitiga siku-siku" role="img">
+        <!-- Segitiga dan label sisi akan digambar lewat JS -->
+      </svg>
+
+      <div class="question" id="question">Memuat soal...</div>
+
+      <div class="options" id="options">
+        <!-- Tombol pilihan akan dibuat dinamis -->
+      </div>
+
+      <div class="result" id="result"></div>
+
+      <div class="controls">
+        <button id="hint-btn" class="btn btn-outline">Bantuan</button>
+        <button id="restart-btn" class="btn btn-outline">Mulai Ulang</button>
+      </div>
+    </div>
+
+    <div class="container hidden" id="end-screen">
+      <div class="end-game">
+        <h2>Permainan Selesai!</h2>
+        <div class="final-score" id="final-score">Skor: 0 soal benar</div>
+        <div class="performance" id="performance"></div>
+        <button id="play-again-btn" class="btn btn-success">Main Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const settingsPanel = document.getElementById("settings-panel");
+    const gameScreen = document.getElementById("game-screen");
+    const endScreen = document.getElementById("end-screen");
+    const svg = document.getElementById("triangle-svg");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const resultEl = document.getElementById("result");
+    const scoreText = document.getElementById("score-text");
+    const timeText = document.getElementById("time-text");
+    const progressText = document.getElementById("progress-text");
+    const progressFill = document.getElementById("progress-fill");
+    const finalScoreEl = document.getElementById("final-score");
+    const performanceEl = document.getElementById("performance");
+    const startBtn = document.getElementById("start-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const playAgainBtn = document.getElementById("play-again-btn");
+    const hintBtn = document.getElementById("hint-btn");
+    const gameTimeSelect = document.getElementById("game-time");
+    const difficultySelect = document.getElementById("difficulty");
+
+    // Game state
+    let gameState = {
+      triangleData: {},
+      correctAnswer: "",
+      questionCount: 0,
+      correctCount: 0,
+      gameDuration: 120, // in seconds (2 minutes default)
+      timeLeft: 120,
+      difficulty: "medium",
+      timerInterval: null,
+      gameTimerInterval: null,
+      hintsUsed: 0
+    };
+
+    // Questions and difficulty settings
+    const questions = [
+      { text: "Berapakah nilai sin(θ)?", key: "sin" },
+      { text: "Berapakah nilai cos(θ)?", key: "cos" },
+      { text: "Berapakah nilai tan(θ)?", key: "tan" },
+      { text: "Sisi depan dibagi sisi miring adalah?", key: "sin" },
+      { text: "Sisi samping dibagi sisi miring adalah?", key: "cos" },
+      { text: "Sisi depan dibagi sisi samping adalah?", key: "tan" }
+    ];
+
+    const difficultySettings = {
+      easy: { min: 3, max: 9, decimal: false },
+      medium: { min: 5, max: 15, decimal: false },
+      hard: { min: 10, max: 20, decimal: true }
+    };
+
+    // Initialize game
+    function initGame() {
+      gameState.gameDuration = parseInt(gameTimeSelect.value) * 60;
+      gameState.timeLeft = gameState.gameDuration;
+      gameState.difficulty = difficultySelect.value;
+      gameState.questionCount = 0;
+      gameState.correctCount = 0;
+      gameState.hintsUsed = 0;
+      
+      settingsPanel.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      endScreen.classList.add("hidden");
+      
+      startTimers();
+      generateQuestion();
+    }
+
+    // Start timers
+    function startTimers() {
+      // Timer for game duration
+      gameState.gameTimerInterval = setInterval(() => {
+        gameState.timeLeft--;
+        updateTimerDisplay();
+        
+        if (gameState.timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+      
+      // Timer for question time (not used currently)
+      gameState.timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Update timer display
+    function updateTimer() {
+      // Not used in this version
+    }
+
+    // Update time left display
+    function updateTimerDisplay() {
+      const minutes = Math.floor(gameState.timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (gameState.timeLeft % 60).toString().padStart(2, '0');
+      timeText.textContent = `${minutes}:${seconds}`;
+      
+      // Update progress bar (time-based)
+      const progressPercent = ((gameState.gameDuration - gameState.timeLeft) / gameState.gameDuration) * 100;
+      progressFill.style.width = `${progressPercent}%`;
+    }
+
+    // Stop timers
+    function stopTimers() {
+      clearInterval(gameState.timerInterval);
+      clearInterval(gameState.gameTimerInterval);
+    }
+
+    // Create SVG element
+    function createSVGElement(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const key in attrs) {
+        if (key === "textContent") {
+          el.textContent = attrs[key];
+        } else {
+          el.setAttribute(key, attrs[key]);
+        }
+      }
+      return el;
+    }
+
+    // Draw triangle with proper scaling and margins
+    function drawTriangle(opposite, adjacent, hypotenuse) {
+      svg.innerHTML = "";
+      
+      // Calculate dimensions with proper margins
+      const margin = 40;
+      const maxWidth = 300 - margin * 2;
+      const maxHeight = 200 - margin * 2;
+      
+      // Calculate scale factor to fit the triangle in the available space
+      const scaleX = maxWidth / adjacent;
+      const scaleY = maxHeight / opposite;
+      const scale = Math.min(scaleX, scaleY);
+      
+      // Calculate scaled dimensions
+      const adjPx = adjacent * scale;
+      const oppPx = opposite * scale;
+      
+      // Calculate starting position (centered)
+      const startX = margin;
+      const startY = 250 - margin - oppPx; // SVG height is 250
+      
+      // Triangle path
+      const path = createSVGElement("path", {
+        d: `M ${startX} ${startY + oppPx} L ${startX + adjPx} ${startY + oppPx} L ${startX} ${startY} Z`,
+        fill: "rgba(67, 97, 238, 0.2)",
+        stroke: "#4361ee",
+        "stroke-width": 3,
+      });
+      svg.appendChild(path);
+
+      // Right angle indicator
+      const rightAngle = createSVGElement("path", {
+        d: `M ${startX} ${startY + oppPx - 15} L ${startX} ${startY + oppPx} L ${startX + 15} ${startY + oppPx}`,
+        fill: "none",
+        stroke: "#f72585",
+        "stroke-width": 2,
+      });
+      svg.appendChild(rightAngle);
+
+      // Labels
+      const labelAdjacent = createSVGElement("text", {
+        x: startX + adjPx / 2,
+        y: startY + oppPx + 20,
+        textContent: adjacent % 1 === 0 ? adjacent : adjacent.toFixed(1),
+        class: "side-label",
+        "text-anchor": "middle",
+      });
+      svg.appendChild(labelAdjacent);
+
+      const labelOpposite = createSVGElement("text", {
+        x: startX - 10,
+        y: startY + oppPx / 2,
+        textContent: opposite % 1 === 0 ? opposite : opposite.toFixed(1),
+        class: "side-label",
+        "text-anchor": "end",
+        transform: `rotate(-90 ${startX - 10},${startY + oppPx / 2})`
+      });
+      svg.appendChild(labelOpposite);
+
+      const labelHypotenuse = createSVGElement("text", {
+        x: startX + adjPx / 2 + 15,
+        y: startY + oppPx / 2 - 10,
+        textContent: hypotenuse.toFixed(1),
+        class: "side-label",
+        "text-anchor": "start",
+        transform: `rotate(-45 ${startX + adjPx / 2 + 15},${startY + oppPx / 2 - 10})`
+      });
+      svg.appendChild(labelHypotenuse);
+
+      const angleLabel = createSVGElement("text", {
+        x: startX + 20,
+        y: startY + oppPx - 10,
+        textContent: "θ",
+        class: "angle-label"
+      });
+      svg.appendChild(angleLabel);
+    }
+
+    // Generate random number based on difficulty
+    function getRandomNumber() {
+      const settings = difficultySettings[gameState.difficulty];
+      let num;
+      
+      if (settings.decimal && Math.random() > 0.5) {
+        // Generate decimal number
+        num = settings.min + Math.random() * (settings.max - settings.min);
+        // Round to 1 decimal place
+        num = Math.round(num * 10) / 10;
+      } else {
+        // Generate integer
+        num = Math.floor(settings.min + Math.random() * (settings.max - settings.min + 1));
+      }
+      
+      return num;
+    }
+
+    // Generate question
+    function generateQuestion() {
+      if (gameState.timeLeft <= 0) {
+        return;
+      }
+
+      gameState.questionCount++;
+      
+      // Generate triangle sides
+      let adjacent, opposite;
+      const settings = difficultySettings[gameState.difficulty];
+      
+      do {
+        adjacent = getRandomNumber();
+        opposite = getRandomNumber();
+      } while (adjacent === opposite); // Ensure they're not equal for better variety
+      
+      const hypotenuse = Math.sqrt(adjacent ** 2 + opposite ** 2);
+      gameState.triangleData = { adjacent, opposite, hypotenuse };
+
+      drawTriangle(opposite, adjacent, hypotenuse);
+
+      // Select question
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      gameState.correctAnswer = q.key;
+      questionEl.textContent = q.text;
+      resultEl.textContent = "";
+      resultEl.className = "result";
+      hintBtn.disabled = false;
+
+      // Calculate trigonometric values
+      const sin = (opposite / hypotenuse).toFixed(2);
+      const cos = (adjacent / hypotenuse).toFixed(2);
+      const tan = (opposite / adjacent).toFixed(2);
+
+      // Create options
+      let opts = [
+        {key: "sin", label: `${sin}`},
+        {key: "cos", label: `${cos}`},
+        {key: "tan", label: `${tan}`}
+      ];
+
+      // Add some wrong answers based on difficulty
+      if (gameState.difficulty === "hard") {
+        opts.push(
+          {key: "wrong1", label: `${(opposite/adjacent + 0.1).toFixed(2)}`},
+          {key: "wrong2", label: `${(adjacent/hypotenuse - 0.1).toFixed(2)}`}
+        );
+      }
+
+      // Shuffle options
+      opts = opts.sort(() => Math.random() - 0.5).slice(0, 4); // Take first 4 options
+
+      // Update UI
+      optionsEl.innerHTML = "";
+      opts.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt.label;
+        btn.className = "option-btn";
+        btn.dataset.key = opt.key;
+        btn.onclick = checkAnswer;
+        optionsEl.appendChild(btn);
+      });
+
+      // Update progress
+      updateProgress();
+    }
+
+    // Check answer
+    function checkAnswer(e) {
+      const selectedKey = e.target.dataset.key;
+      const buttons = Array.from(optionsEl.children);
+
+      // Disable all buttons
+      buttons.forEach(b => b.disabled = true);
+
+      // Highlight correct and incorrect answers
+      buttons.forEach(btn => {
+        if (btn.dataset.key === gameState.correctAnswer) {
+          btn.classList.add("correct");
+        } else if (btn === e.target && selectedKey !== gameState.correctAnswer) {
+          btn.classList.add("incorrect");
+        }
+      });
+
+      // Check if answer is correct
+      if (selectedKey === gameState.correctAnswer) {
+        resultEl.textContent = "Benar! 🎉";
+        resultEl.classList.add("correct");
+        gameState.correctCount++;
+      } else {
+        resultEl.textContent = "Salah. Jawaban yang benar adalah " + 
+          (gameState.correctAnswer === "sin" ? "sin(θ)" : 
+           gameState.correctAnswer === "cos" ? "cos(θ)" : "tan(θ)");
+        resultEl.classList.add("wrong");
+      }
+
+      // Update score
+      updateProgress();
+
+      // Next question after delay
+      setTimeout(generateQuestion, 2000);
+    }
+
+    // Update progress
+    function updateProgress() {
+      scoreText.textContent = `${gameState.correctCount}/${gameState.questionCount}`;
+      progressText.textContent = `${gameState.questionCount} soal`;
+    }
+
+    // Show hint
+    function showHint() {
+      gameState.hintsUsed++;
+      
+      const { adjacent, opposite, hypotenuse } = gameState.triangleData;
+      let hint = "";
+      
+      switch(gameState.correctAnswer) {
+        case "sin":
+          hint = `sin(θ) = depan/miring = ${opposite}/${hypotenuse.toFixed(1)}`;
+          break;
+        case "cos":
+          hint = `cos(θ) = samping/miring = ${adjacent}/${hypotenuse.toFixed(1)}`;
+          break;
+        case "tan":
+          hint = `tan(θ) = depan/samping = ${opposite}/${adjacent}`;
+          break;
+      }
+      
+      resultEl.textContent = hint;
+      resultEl.className = "result";
+      hintBtn.disabled = true;
+    }
+
+    // End game
+    function endGame() {
+      stopTimers();
+      gameScreen.classList.add("hidden");
+      endScreen.classList.remove("hidden");
+      
+      // Calculate score and performance
+      const accuracy = gameState.questionCount > 0 
+        ? Math.round((gameState.correctCount / gameState.questionCount) * 100) 
+        : 0;
+      
+      finalScoreEl.textContent = `Skor: ${gameState.correctCount} benar dari ${gameState.questionCount} soal (${accuracy}%)`;
+      
+      let performanceMsg = "";
+      if (accuracy >= 90) {
+        performanceMsg = "Luar biasa! Anda menguasai trigonometri dengan sangat baik.";
+      } else if (accuracy >= 70) {
+        performanceMsg = "Bagus! Pemahaman trigonometri Anda sudah cukup baik.";
+      } else if (accuracy >= 50) {
+        performanceMsg = "Cukup baik. Coba pelajari lagi perbandingan trigonometri.";
+      } else {
+        performanceMsg = "Anda perlu lebih banyak latihan. Jangan menyerah!";
+      }
+      
+      const minutes = Math.floor(gameState.gameDuration / 60);
+      
+      performanceEl.innerHTML = `
+        <p>${performanceMsg}</p>
+        <p>Waktu permainan: ${minutes} menit</p>
+        <p>Bantuan digunakan: ${gameState.hintsUsed} kali</p>
+        <p>Rata-rata: ${Math.round(gameState.questionCount / minutes)} soal per menit</p>
+      `;
+    }
+
+    // Event listeners
+    startBtn.addEventListener("click", initGame);
+    playAgainBtn.addEventListener("click", initGame);
+    restartBtn.addEventListener("click", () => {
+      if (confirm("Apakah Anda yakin ingin memulai ulang? Semua kemajuan akan hilang.")) {
+        initGame();
+      }
+    });
+    hintBtn.addEventListener("click", showHint);
+
+    // Initialize hint button
+    hintBtn.disabled = true;
+  </script>
+</body>
+</html>

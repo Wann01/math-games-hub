@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Titik Koordinat | Belajar Matematika Interaktif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #ef233c;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --white: #ffffff;
+      --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-color: #f5f7ff;
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      height: calc(100vh - 2rem);
+      max-height: 800px;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .header h1 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: var(--bg-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .game-menu {
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    input[type="number"] {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+      width: 80px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    .btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .timer, .score {
+      background: var(--white);
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .timer {
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+
+    .score {
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+
+    .game-board {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: 30px repeat(11, 1fr);
+      grid-template-rows: 30px repeat(11, 1fr);
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e9ecef;
+      width: 100%;
+      max-width: 420px;
+      max-height: 420px;
+    }
+
+    .cell {
+      width: 100%;
+      height: 100%;
+      min-height: 30px;
+      border: 1px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .point {
+      background-color: var(--danger);
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      box-shadow: 0 2px 8px rgba(239, 35, 60, 0.4);
+      position: relative;
+    }
+
+    .point::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(239, 35, 60, 0.3);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.7; }
+      70% { transform: scale(1.2); opacity: 0; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+
+    .x-axis {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .y-axis {
+      background-color: rgba(248, 150, 30, 0.1);
+    }
+
+    .choices-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+      margin: 1rem 0;
+      flex-shrink: 0;
+    }
+
+    .choice-btn {
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .choice-btn:hover {
+      border-color: var(--primary-light);
+      background: rgba(67, 97, 238, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .choice-btn:active {
+      transform: translateY(0);
+    }
+
+    .result {
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 0.5rem 0;
+      font-weight: 500;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success {
+      background: rgba(76, 201, 240, 0.1);
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+
+    .error {
+      background: rgba(239, 35, 60, 0.1);
+      color: var(--danger);
+      border-left: 4px solid var(--danger);
+    }
+
+    .game-over {
+      text-align: center;
+      padding: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .game-over h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .stat {
+      background: var(--white);
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      min-width: 100px;
+    }
+
+    .stat.correct {
+      border-top: 4px solid var(--success);
+    }
+
+    .stat.incorrect {
+      border-top: 4px solid var(--danger);
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+        height: calc(100vh - 1rem);
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .header p {
+        font-size: 0.8rem;
+      }
+      
+      .choices-container {
+        grid-template-columns: 1fr;
+      }
+      
+      #grid {
+        grid-template-columns: 25px repeat(11, 1fr);
+        grid-template-rows: 25px repeat(11, 1fr);
+      }
+      
+      .cell {
+        font-size: 0.6rem;
+      }
+      
+      .game-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      
+      .timer, .score {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-bullseye"></i> Game Titik Koordinat</h1>
+      <p>Latih kemampuan matematika Anda dalam menentukan koordinat titik</p>
+    </div>
+
+    <div class="game-menu" id="menu">
+      <div class="form-group">
+        <div class="form-control">
+          <label for="duration"><i class="fas fa-clock"></i> Durasi:</label>
+          <input type="number" id="duration" min="10" value="60">
+          <span>detik</span>
+        </div>
+        <button class="btn btn-primary" onclick="startGame()">
+          <i class="fas fa-play"></i> Mulai
+        </button>
+      </div>
+    </div>
+
+    <div class="game-info hidden" id="game-info">
+      <div class="timer" id="timer">
+        <i class="fas fa-hourglass-half"></i> Waktu: 60s
+      </div>
+      <div class="score" id="score">
+        <i class="fas fa-check-circle"></i> Benar: 0 <i class="fas fa-times-circle"></i> Salah: 0
+      </div>
+    </div>
+
+    <div class="game-board">
+      <div id="grid" class="hidden"></div>
+      <div id="choices" class="choices-container hidden"></div>
+      <div id="result"></div>
+    </div>
+
+    <div class="game-over hidden" id="game-over">
+      <h2><i class="fas fa-flag-checkered"></i> Permainan Selesai!</h2>
+      <div class="stats">
+        <div class="stat correct">
+          <div class="stat-value" id="final-correct">0</div>
+          <div class="stat-label">Jawaban Benar</div>
+        </div>
+        <div class="stat incorrect">
+          <div class="stat-value" id="final-incorrect">0</div>
+          <div class="stat-label">Jawaban Salah</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="startGame()">
+        <i class="fas fa-redo"></i> Main Lagi
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const result = document.getElementById("result");
+    const choicesContainer = document.getElementById("choices");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const gameOverScreen = document.getElementById("game-over");
+    const finalCorrect = document.getElementById("final-correct");
+    const finalIncorrect = document.getElementById("final-incorrect");
+    const gameInfo = document.getElementById("game-info");
+    const durationInput = document.getElementById("duration");
+    const menu = document.getElementById("menu");
+
+    let pointX, pointY;
+    let correct = 0, incorrect = 0;
+    let timeLeft = 60;
+    let timerInterval;
+
+    function getRandomCoord() {
+      return Math.floor(Math.random() * 11) - 5;
+    }
+
+    function generateChoices(correctX, correctY) {
+      const choices = [`${correctX},${correctY}`];
+      while (choices.length < 4) {
+        const x = getRandomCoord(), y = getRandomCoord();
+        const key = `${x},${y}`;
+        if (!choices.includes(key)) choices.push(key);
+      }
+      return choices.sort(() => Math.random() - 0.5);
+    }
+
+    function drawGrid() {
+      grid.innerHTML = '';
+      grid.classList.remove("hidden");
+      
+      // Create empty top-left cell
+      grid.appendChild(document.createElement("div"));
+      
+      // Create x-axis labels (-5 to 5)
+      for (let x = -5; x <= 5; x++) {
+        const label = document.createElement('div');
+        label.className = 'cell';
+        label.textContent = x;
+        grid.appendChild(label);
+      }
+      
+      // Create y-axis labels and grid cells
+      for (let y = 5; y >= -5; y--) {
+        // Y-axis label
+        const yLabel = document.createElement('div');
+        yLabel.className = 'cell';
+        yLabel.textContent = y;
+        grid.appendChild(yLabel);
+        
+        // Grid cells for this row
+        for (let x = -5; x <= 5; x++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          if (x === 0) cell.classList.add('y-axis');
+          if (y === 0) cell.classList.add('x-axis');
+          
+          if (x === pointX && y === pointY) {
+            const dot = document.createElement('div');
+            dot.className = 'point';
+            cell.appendChild(dot);
+          }
+          
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    function getExplanation(x, y) {
+      if (x > 0 && y > 0) return "Kuadran I (X positif, Y positif)";
+      if (x < 0 && y > 0) return "Kuadran II (X negatif, Y positif)";
+      if (x < 0 && y < 0) return "Kuadran III (X negatif, Y negatif)";
+      if (x > 0 && y < 0) return "Kuadran IV (X positif, Y negatif)";
+      if (x === 0 && y !== 0) return "Berada di sumbu Y";
+      if (y === 0 && x !== 0) return "Berada di sumbu X";
+      return "Titik pusat (0,0)";
+    }
+
+    function nextQuestion() {
+      if (timeLeft <= 0) return;
+      
+      pointX = getRandomCoord();
+      pointY = getRandomCoord();
+      
+      drawGrid();
+      
+      const choices = generateChoices(pointX, pointY);
+      choicesContainer.innerHTML = '';
+      choicesContainer.classList.remove("hidden");
+      
+      result.innerHTML = '';
+      
+      choices.forEach((choice, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = `(${choice})`;
+        btn.onclick = () => {
+          const [x, y] = choice.split(',').map(Number);
+          
+          // Disable all buttons after selection
+          document.querySelectorAll('.choice-btn').forEach(b => {
+            b.disabled = true;
+          });
+          
+          if (x === pointX && y === pointY) {
+            correct++;
+            result.innerHTML = `<div class="result success"><i class="fas fa-check-circle"></i> <strong>Benar!</strong> ${getExplanation(x, y)}</div>`;
+          } else {
+            incorrect++;
+            result.innerHTML = `<div class="result error"><i class="fas fa-times-circle"></i> <strong>Salah.</strong> Jawaban yang benar: (${pointX}, ${pointY}) - ${getExplanation(pointX, pointY)}</div>`;
+          }
+          
+          updateScore();
+          setTimeout(nextQuestion, 1500);
+        };
+        choicesContainer.appendChild(btn);
+      });
+    }
+
+    function updateScore() {
+      scoreDisplay.innerHTML = `<i class="fas fa-check-circle"></i> Benar: ${correct} <i class="fas fa-times-circle"></i> Salah: ${incorrect}`;
+    }
+
+    function startGame() {
+      const val = parseInt(durationInput.value);
+      if (isNaN(val) || val < 10) {
+        alert("Masukkan waktu minimal 10 detik");
+        return;
+      }
+      
+      // Reset game state
+      correct = 0; 
+      incorrect = 0; 
+      timeLeft = val;
+      
+      // Update UI
+      updateScore();
+      menu.classList.add("hidden");
+      gameOverScreen.classList.add("hidden");
+      gameInfo.classList.remove("hidden");
+      result.innerHTML = '';
+      
+      // Start timer
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.innerHTML = `<i class="fas fa-hourglass-half"></i> Waktu: ${timeLeft}s`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+      
+      // Start first question
+      nextQuestion();
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      
+      // Show game over screen
+      finalCorrect.textContent = correct;
+      finalIncorrect.textContent = incorrect;
+      
+      // Hide game elements
+      grid.classList.add("hidden");
+      choicesContainer.classList.add("hidden");
+      gameInfo.classList.add("hidden");
+      
+      // Show game over screen
+      gameOverScreen.classList.remove("hidden");
+      menu.classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
